@@ -1,0 +1,70 @@
+begintemplate temp
+	public soma, dend,axon, nclist
+	create soma, dend[1], axon, nclist
+
+	proc init() {
+		ndend = 5
+		create soma, dend[ndend], axon
+		access soma
+		//create cell body
+		soma {
+			nseg = 1
+			diam = 18.8	
+  			Ra = 123.0
+			L = 18.8
+			insert hh
+			gnabar_hh = 0.25
+			gl_hh = .0001666
+			el_hh = -60.0
+		}
+	//create dendrites
+	for i = 0, ndend-1 dend[i] {
+		nseg = 2
+		L= 701.9
+		diam = 3.18
+		Ra = 123	
+		insert pas
+		g_pas = .0001667
+		e_pas = -60.0
+	}
+
+	//create axon
+	axon {
+		L = 1000
+		diam = 1
+		nseg = 10
+	}
+
+	//Connect dendrites to soma
+	connect dend[0](0), soma(0)
+	connect dend[1](0), soma(0)
+	connect dend[2](0), soma(0)
+	connect dend[3](0), soma(0)
+	connect dend[4](0), soma(0)
+	connect axon(0), soma(1)
+	}
+
+endtemplate temp
+
+ncells=10
+objref cells[ncells]
+
+for i=0,ncells-1{
+	cells[i]=new temp()
+
+}
+
+objref stim
+stim=new IClamp(0.5)
+stim.del = 100
+stim.dur = 100
+stim.amp = 0.5
+
+objref syn
+cells[1].dend[0] syn=new Exp2Syn(0.5)
+
+objectvar con
+cells[0].soma con = new NetCon(&cells[0].soma.v(1), syn, -20, 1, 0.003)
+
+
+tstop=300
