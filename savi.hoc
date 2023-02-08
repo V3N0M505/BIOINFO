@@ -1,0 +1,36 @@
+ndend=5
+create soma,dend[ndend],axon
+access soma
+soma{
+    nseg=1
+    L=18.8
+    diam=18.8
+    Ra=123
+    insert hh
+
+}
+for i=0,ndend-1 dend[i]{
+    nseg=3
+    L=10
+    diam=10
+    insert pas
+}  
+axon{
+    L=1000
+    diam=1
+    nseg=10
+    insert hh
+}
+connect dend[0](0),soma(0)
+connect dend[1](0),soma(0)
+connect dend[2](0),soma(0)
+connect dend[3](0),soma(0)
+connect dend[4](0),soma(0)
+connect axon(0),soma(1)
+
+objectvar stim
+soma stim=new IClamp(0.5)
+stim.del=100
+stim.dur=100
+stim.amp=0.1
+tstop=300
