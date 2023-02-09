@@ -1,0 +1,81 @@
+begintemplate temp
+	public soma, dend,axon, nclist
+	create soma, dend[1], axon, nclist
+
+	proc init() {
+		ndend = 5
+		create soma, dend[ndend], axon
+		access soma
+		//create cell body
+		soma {
+			nseg = 1
+			diam = 18.8
+  			Ra = 123.0
+			L = 18.8
+			insert hh
+			gnabar_hh = 0.25
+			gl_hh = .0001666
+			el_hh = -60.0
+		}
+	//create dendrites
+	for i = 0, ndend-1 dend[i] {
+		nseg = 2
+		L= 701.9
+		diam = 3.18
+		Ra = 123	
+		insert pas
+		g_pas = .0001667
+		e_pas = -60.0
+	}
+
+	//create axon
+	axon {
+		L = 1000
+		diam = 1
+		nseg = 10
+	}
+
+	//Connect dendrites to soma
+	connect dend[0](0), soma(0)
+	connect dend[1](0), soma(0)
+	connect dend[2](0), soma(0)
+	connect dend[3](0), soma(0)
+	connect dend[4](0), soma(0)
+	connect axon(0), soma(1)
+	}
+
+endtemplate temp
+
+ncells=10
+objref cells[ncells]
+
+for i=0,ncells-1{
+	cells[i]=new temp()
+
+}
+
+objref stim
+for i = 0,ncells-1 {
+cells[i].soma stim=new IClamp(0.5)
+stim.del = 100
+stim.dur = 100
+stim.amp = 0.5
+}
+objref syn[10]
+for i = 0,ncells-1 {
+cells[i].dend[0] syn[i]=new Exp2Syn(0.5)
+}
+
+objectvar con
+cells[0].soma con = new NetCon(&cells[0].soma.v(1), syn[0], -20, 1, 0.003)
+cells[1].soma con = new NetCon(&cells[1].soma.v(1), syn[1], -20, 1, 10)
+cells[2].soma con = new NetCon(&cells[2].soma.v(1), syn[2], -20, 1, 0.003)
+cells[3].soma con = new NetCon(&cells[3].soma.v(1), syn[3], -20, 1, 0.003)
+cells[4].soma con = new NetCon(&cells[4].soma.v(1), syn[4], -20, 1, 0.003)
+cells[5].soma con = new NetCon(&cells[5].soma.v(1), syn[5], -20, 1, 0.003)
+cells[6].soma con = new NetCon(&cells[6].soma.v(1), syn[6], -20, 1, 0.003)
+cells[7].soma con = new NetCon(&cells[7].soma.v(1), syn[7], -20, 1, 0.003)
+cells[8].soma con = new NetCon(&cells[8].soma.v(1), syn[8], -20, 1, 0.003)
+cells[9].soma con = new NetCon(&cells[9].soma.v(1), syn[9], -20, 1, 0.003)
+
+tstop=300
